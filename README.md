@@ -30,8 +30,8 @@
     <li>Bao gồm:</li>
     <ul>
       <li>Chức năng: đăng nhập, tiền và shop vật phẩm trong games, đặt cược đua xe để lấy tiền thưởng, shop bán vật phẩm.</li>
-      <li>Giao diện: mẫu đường đua khác nhau (mỗi mẫu sẽ có 3 tùy chọn ngắn, dài, trung bình), bộ mẫu nhân vật khác nhau (trong đó có 1 mẫu dùng hình ảnh các thành viên nhóm), có các rào cản trên đường đua.</li>
-      <li>Mini games</li>
+      <li>Giao diện: 2 mẫu đường đua khác nhau, 3 bộ mẫu nhân vật khác nhau (trong đó có 1 mẫu dùng hình ảnh các thành viên nhóm), có các rào cản trên đường đua.</li>
+      <li>1 Mini games</li>
     </ul>
   </ul>
 </p>
