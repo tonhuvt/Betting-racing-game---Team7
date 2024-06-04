@@ -363,7 +363,7 @@ class Score:
     def load(self):
         # load high score
         try:
-            with open("high_score.txt", "r") as file:
+            with open("high_score_minigame.txt", "r") as file:
                 self.high_score = int(file.read())
         except (IOError, ValueError):
             self.high_score = 0
@@ -481,8 +481,3 @@ def start_game(coin):
 
 
 # this loop keeps calling the main game function as long as the player wants to continue
-'''
-while PLAY_GAME:
-    PLAY_GAME = start_game()
-
-'''
