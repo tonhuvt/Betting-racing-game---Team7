@@ -11,13 +11,13 @@ WINDOWHEIGHT = 720
 BG_MENU_IMG = pygame.image.load('img/backgroundMenu.png')
 BG_PLAY_IMG = pygame.image.load("img/BackGroundPlay.png")
 BG_MENU_SetAV = pygame.image.load("img/GiaoDienChonSetNV.png")
-BG_Betting = pygame.image.load("img/GiaoDienBietting.png")
+BG_Betting = pygame.image.load("img/GiaoDienBetting.png")
 
 
 
-b = [] # anh xe khi chien thang
+b = [] # winning car
 
-a=[] # thu tu xe
+a=[] # car order
 
 # Hieu ung nut
 NutPlay = pygame.image.load("img/NutPlay1.png")
@@ -30,7 +30,14 @@ menu_sound = pygame.mixer.Sound("sound/Road Tripzzz - Ofshane (2).mp3")
 menu_sound.set_volume(0.25)
 minigame_sound = pygame.mixer.Sound("sound/Cuckoo Clock - Quincas Moreira.mp3")
 minigame_sound.set_volume(0.25)
-
+over_sound = pygame.mixer.Sound("sound/lose.mp3")
+over_sound.set_volume(0.25)
+winner_sound = pygame.mixer.Sound("sound/clap.mp3")
+winner_sound.set_volume(0.25)
+game_sound = pygame.mixer.Sound("sound/race3.mp3")
+game_sound.set_volume(0.25)
+count_sound = pygame.mixer.Sound("sound/count.mp3")
+count_sound.set_volume(0.25)
 pygame.init()
 
 
@@ -40,14 +47,11 @@ fpsClock = pygame.time.Clock()
 
 DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.flip()
-pygame.display.set_caption('BETTING RACING GAME')
+pygame.display.set_caption('BETTING RACING GAME - Team7')
 
 
 RED=(255,0,0)
 GREEN=(0,255,0)
-
-WINDOWWIDTH = 1500
-WINDOWHEIGHT = 700
 
 X_MARGIN = 80
 LANEWIDTH = 60
@@ -55,11 +59,8 @@ LANEWIDTH = 60
 CARWIDTH = 0
 CARHEIGHT = 0
 CARSPEED = 3
-CARIMG10=pygame.image.load("img/dollar.png")
-
 
 class Car1():
-
     def __init__(self):
         self.width = CARWIDTH
         self.height = CARHEIGHT
@@ -79,18 +80,18 @@ class Car1():
         pos_now1 = self.x
         if self.x <= 1180:
             if self.x +6>1180:
-                self.x += 8
+                self.x += 8                  #bùa 0: tăng tốc
             global vt_1
             vt_1 = 0
             change = random.randint(1, 5)
-            if ((self.x > 100 * change) and (self.x < 100 * change + 5)):
-                self.x = 400
+            if ((self.x > 100 * change) and (self.x < 100 * change + 5)): 
+                self.x = 400                  #bùa 1: đưa xe về vị trí x=400
             elif ((self.x > 105 * change) and (self.x < 105 * change + 5)):
-                pass
-            elif ((self.x > 125 * change) and (self.x < 125 * change + 100)):
-                self.x -= random.randint(0,3)
+                pass                          #bùa 2: choáng
+            elif ((self.x > 125 * change) and (self.x < 125 * change + 100)): 
+                self.x -= random.randint(0,3) #bùa 3: lùi
             else:
-                self.x += random.randint(0,3)
+                self.x += random.randint(0,3) #bùa 4: tiến
 
         else:
             vt_1= 1
@@ -132,7 +133,7 @@ class Car2():
         else:
             vt_2 = 2
             self.x = 1181
-            vt2_x = self.x
+
 class Car3():
     def __init__(self):
         self.width = CARWIDTH
@@ -208,6 +209,7 @@ class Car4():
         else:
             vt_4 = 4
             self.x = 1181
+            
 class Car5():
     def __init__(self):
         self.width = CARWIDTH
@@ -254,7 +256,11 @@ def gamePlay(bg, car1, car2, car3, car4, car5):
     car4.__init__()
     car5.__init__()
     bg.__init__()
+    menu_sound.stop()
+    count_sound.play(-1)
     bg.count_321()
+    count_sound.stop()
+    game_sound.play(-1)
     running = True
     while running:
         for event in pygame.event.get():
@@ -277,17 +283,21 @@ def gamePlay(bg, car1, car2, car3, car4, car5):
         if (vt_1==1 and vt_2==2 and vt_3== 3 and vt_4==4 and vt_5==5):
 
             if (chon_xe[0]== a[0]):
-                over_bg = pygame.image.load("img\giaodienWWin.png")
-                DISPLAYSURF.blit(over_bg, (0, 0))
+                win_bg = pygame.image.load("img\giaodienWin.png")
+                DISPLAYSURF.blit(win_bg, (0, 0))
                 if ( tmp == 10):
                     coin[0] += int(tienCuoc[0]) * 10
                     tmp += 10
+                game_sound.stop()
+                winner_sound.play(1)
             else:
                 over_bg = pygame.image.load("img\giaodienOver.png")
                 DISPLAYSURF.blit(over_bg, (0, 0))
                 if (tmp == 10 ):
                     coin[0] -= int(tienCuoc[0])
                     tmp += 10
+                game_sound.stop()
+                over_sound.play(1)
             file_2 = open(coin_username_info, 'w')
             file_2.write(str(coin[0]))
             file_2.close()
@@ -307,6 +317,8 @@ def gamePlay(bg, car1, car2, car3, car4, car5):
                 if event.key == K_ESCAPE:
                     a.clear()
                     b.clear()
+                    winner_sound.stop()
+                    over_sound.stop()
                     menu_sound.stop()
                     MeNu()
         pygame.display.update()
@@ -320,21 +332,16 @@ def start_the_game():
     car4 = Car4()
     car5 = Car5()
     gamePlay(bg, car1, car2, car3, car4, car5)
-#######################################################
 
-
-
-
-def drawCoin():  # vẽ tiền
+def drawCoin():  
     draw_text(str(coin[0]) + "$", "font/monofonto.ttf", 38, (255, 255, 255), SCREEN_WIDTH - 70, 170, "topright")
 
 
-def draw_Race(race_img): #hàm vẽ đường đua
+def draw_Race(race_img): 
     DISPLAYSURF.blit(race_img, 0, 0)
 
 
-
-#ve cac giao dien
+#Các giao diện
 def HamGiaoDienSetNV():
     while True:
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -342,23 +349,16 @@ def HamGiaoDienSetNV():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            # Quay lại
             if event.type == pygame.KEYDOWN:
                 if event.key == K_ESCAPE:
                     return
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # Quay lại
                 if (event.button == 1) & (mouse_x >= 1173) & (mouse_x <= 1259) & (mouse_y >= 32) & (mouse_y <= 112):
                     return
-                #chon nut tick thu nhat
                 if (event.button == 1) & (mouse_x >= 1032) & (mouse_x <= 1090) & (mouse_y >= 270) & (mouse_y <= 328):
                     HamGiaoDienBetting(1)
-                # if (event.button == 1) & (mouse_x >= 1032) & (mouse_x <= 1090) & (mouse_y >= 340) & (mouse_y <= 398):
-                #     HamGiaoDienBetting(2)
                 if (event.button == 1) & (mouse_x >= 1032) & (mouse_x <= 1090) & (mouse_y >= 417) & (mouse_y <= 478):
                     HamGiaoDienBetting(3)
-                # if (event.button == 1) & (mouse_x >= 1032) & (mouse_x <= 1090) & (mouse_y >= 487) & (mouse_y <= 549):
-                #     HamGiaoDienBetting(4)
                 if (event.button == 1) & (mouse_x >= 1032) & (mouse_x <= 1090) & (mouse_y >= 566) & (mouse_y <= 624):
                     HamGiaoDienBetting(5)
 
@@ -369,12 +369,8 @@ def HamGiaoDienSetNV():
             DISPLAYSURF.blit(pygame.image.load("img/NutBack.png"), (0, 0))
         if (mouse_x >= 1032) & (mouse_x <= 1090) & (mouse_y >= 270) & (mouse_y <= 328):
             DISPLAYSURF.blit(pygame.image.load("img/NutTickSet1.png"), (0, 0))
-        # if (mouse_x >= 1032) & (mouse_x <= 1090) & (mouse_y >= 340) & (mouse_y <= 398):
-        #     DISPLAYSURF.blit(pygame.image.load("img/NutTickSet2.png"), (0, 0))
         if (mouse_x >= 1032) & (mouse_x <= 1090) & (mouse_y >= 417) & (mouse_y <= 478):
             DISPLAYSURF.blit(pygame.image.load("img/NutTickSet3.png"), (0, 0))
-        # if (mouse_x >= 1032) & (mouse_x <= 1090) & (mouse_y >= 487) & (mouse_y <= 549):
-        #     DISPLAYSURF.blit(pygame.image.load("img/NutTickSet4.png"), (0, 0))
         if (mouse_x >= 1032) & (mouse_x <= 1090) & (mouse_y >= 566) & (mouse_y <= 624):
             DISPLAYSURF.blit(pygame.image.load("img/NutTickSet5.png"), (0, 0))
         pygame.display.update()
@@ -392,13 +388,10 @@ class InputBox:
         self.active = False
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            # If the user clicked on the input_box rect.
             if self.rect.collidepoint(event.pos):
-                # Toggle the active variable.
                 self.active = not self.active
             else:
                 self.active = False
-            # Change the current color of the input box.
             self.color = pygame.Color((255, 255, 255)) if self.active else pygame.Color((0, 0, 0))
         if event.type == pygame.KEYDOWN:
             if self.active:
@@ -406,18 +399,14 @@ class InputBox:
                     self.text = self.text[:-1]
                 else:
                     self.text += event.unicode
-                # Re-render the text.
                 self.txt_surface = FONT.render(self.text, True, self.color)
 
     def update(self):
-        # Resize the box if the text is too long.
         width = max(200, self.txt_surface.get_width()+10)
         self.rect.w = width
 
     def draw(self, screen):
-        # Blit the text.
         DISPLAYSURF.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
-        # Blit the rect.
         pygame.draw.rect(DISPLAYSURF, self.color, self.rect, 2)
 
 
@@ -426,35 +415,23 @@ def HamGiaoDienBetting(set):
     chon_xe = [1]
     global car_1, car_2, car_3, car_4, car_5, tienCuoc
     if (set == 1):
-        car_1 = pygame.image.load("img/Set Xe/16.png")
-        car_2 = pygame.image.load("img/Set Xe/17.png")
-        car_3 = pygame.image.load("img/Set Xe/18.png")
-        car_4 = pygame.image.load("img/Set Xe/19.png")
-        car_5 = pygame.image.load("img/Set Xe/20.png")
-    # elif (set == 2):
-    #     car_1 = pygame.image.load("img/Set Xe/15.png")
-    #     car_2 = pygame.image.load("img/Set Xe/13.png")
-    #     car_3 = pygame.image.load("img/Set Xe/11.png")
-    #     car_4 = pygame.image.load("img/Set Xe/12.png")
-    #     car_5 = pygame.image.load("img/Set Xe/14.png")
+        car_1 = pygame.image.load("img/Set Xe/set1/16.png")
+        car_2 = pygame.image.load("img/Set Xe/set1/17.png")
+        car_3 = pygame.image.load("img/Set Xe/set1/18.png")
+        car_4 = pygame.image.load("img/Set Xe/set1/19.png")
+        car_5 = pygame.image.load("img/Set Xe/set1/20.png")
     elif (set == 3):
-        car_1 = pygame.image.load("img/Set Xe/10.png")
-        car_2 = pygame.image.load("img/Set Xe/7.png")
-        car_3 = pygame.image.load("img/Set Xe/6.png")
-        car_4 = pygame.image.load("img/Set Xe/8.png")
-        car_5 = pygame.image.load("img/Set Xe/9.png")
-    # elif (set == 4):
-    #     car_1 = pygame.image.load("img/Set Xe/5.png")
-    #     car_2 = pygame.image.load("img/Set Xe/3.png")
-    #     car_3 = pygame.image.load("img/Set Xe/1.png")
-    #     car_4 = pygame.image.load("img/Set Xe/2.png")
-    #     car_5 = pygame.image.load("img/Set Xe/4.png")
+        car_1 = pygame.image.load("img/Set Xe/set3/10.png")
+        car_2 = pygame.image.load("img/Set Xe/set3/7.png")
+        car_3 = pygame.image.load("img/Set Xe/set3/6.png")
+        car_4 = pygame.image.load("img/Set Xe/set3/8.png")
+        car_5 = pygame.image.load("img/Set Xe/set3/9.png")
     elif (set == 5):
-        car_1 = pygame.image.load("img/Set Xe/21.png")
-        car_2 = pygame.image.load("img/Set Xe/22.png")
-        car_3 = pygame.image.load("img/Set Xe/23.png")
-        car_4 = pygame.image.load("img/Set Xe/24.png")
-        car_5 = pygame.image.load("img/Set Xe/25.png")
+        car_1 = pygame.image.load("img/Set Xe/set5/21.png")
+        car_2 = pygame.image.load("img/Set Xe/set5/22.png")
+        car_3 = pygame.image.load("img/Set Xe/set5/23.png")
+        car_4 = pygame.image.load("img/Set Xe/set5/24.png")
+        car_5 = pygame.image.load("img/Set Xe/set5/25.png")
 
     b.append(car_1)
     b.append(car_2)
@@ -468,7 +445,7 @@ def HamGiaoDienBetting(set):
     Nut4 = False
     Nut5 = False
     clock = pygame.time.Clock()
-    input_box = InputBox(680, 458, 140, 42)  # Khai bao cai hop
+    input_box = InputBox(680, 458, 140, 42) 
     while True:
         mouse_x, mouse_y = pygame.mouse.get_pos()
         DISPLAYSURF.blit(BG_Betting, (0, 0))
@@ -480,17 +457,14 @@ def HamGiaoDienBetting(set):
                 sys.exit()
 
             input_box.handle_event(event)
-            # Quay lại
             if event.type == pygame.KEYDOWN:
                 if event.key == K_ESCAPE:
                     return
             if event.type == pygame.MOUSEBUTTONDOWN:
                 global choose_1, choose_2, choose_3, choose_4, choose_5
-                # Quay lại
                 if (event.button == 1) & (mouse_x >= 1173) & (mouse_x <= 1259) & (mouse_y >= 32) & (mouse_y <= 112):
                     return
                 # Chon nut 1
-
                 if (event.button == 1) & (mouse_x >= 334) & (mouse_x <= 396) & (mouse_y >= 347) & (mouse_y <= 407):
                     Nut1 = True
                     Nut2 = False
@@ -537,12 +511,8 @@ def HamGiaoDienBetting(set):
         # in set nhan vat ra
         if set == 1:
             DISPLAYSURF.blit(pygame.image.load("img/Set 1.png"), (0, 0))
-        # if set == 2:
-        #     DISPLAYSURF.blit(pygame.image.load("img/Set 2.png"), (0, 0))
         if set == 3:
             DISPLAYSURF.blit(pygame.image.load("img/Set 3.png"), (0, 0))
-        # if set == 4:
-        #     DISPLAYSURF.blit(pygame.image.load("img/Set 4.png"), (0, 0))
         if set == 5:
             DISPLAYSURF.blit(pygame.image.load("img/Set 5.png"), (0, 0))
 
@@ -559,7 +529,7 @@ def HamGiaoDienBetting(set):
         elif Nut5 == True:
             DISPLAYSURF.blit(pygame.image.load("img/NutTick5.png"), (0, 0))
 
-            # Hieu ung nut
+        # Hieu ung nut
         if (mouse_x >= 1173) & (mouse_x <= 1259) & (mouse_y >= 32) & (mouse_y <= 112):
             DISPLAYSURF.blit(pygame.image.load("img/NutBack.png"), (0, 0))
         if (mouse_x >= 334) & (mouse_x <= 396) & (mouse_y >= 347) & (mouse_y <= 407):
@@ -582,7 +552,6 @@ def HamGiaoDienBetting(set):
         pygame.display.update()
         clock.tick(30)
 
-#############################################################################
 class Back_ground():
     def __init__(self):
         self.x = 0
@@ -618,9 +587,6 @@ def message_display(text, shift_x, shift_y, color, sleep_time):
     pygame.display.update()
     time.sleep(sleep_time)
 
-
-
-#############################################################################3
 
 def HamGiaoDienHelp():
     while True:
@@ -663,34 +629,32 @@ def HamGiaoDienPlay():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            # Quay lại
             if event.type == pygame.KEYDOWN:
                 if event.key == K_ESCAPE:
                     return
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # Quay lại
                 if (event.button == 1) & (mouse_x >= 1173) & (mouse_x <= 1259) & (mouse_y >= 32) & (mouse_y <= 112):
                     return
-                # chon Map
                 if (event.button == 1) & (mouse_x >= 0) & (mouse_x <= 415) & (mouse_y >= 460) & (mouse_y <= 690):
                     map=pygame.image.load("img/Map1.png")
                     HamGiaoDienSetNV()
                 if (event.button == 1) & (mouse_x >= 858) & (mouse_x <= 1280) & (mouse_y >= 151) & (mouse_y <= 392):
-                    map=pygame.image.load("img/Map4.png")
+                    map=pygame.image.load("img/Map2.png")
                     HamGiaoDienSetNV()
 
         DISPLAYSURF.blit(BG_PLAY_IMG, (0, 0)) # Background sau khi ấn nút Play
-        # Bên dưới là hiệu ứng nút Play
+        
+        # Hiệu ứng nút Play
         if (mouse_x >= 1173) & (mouse_x <= 1259) & (mouse_y >= 32) & (mouse_y <= 112):
             DISPLAYSURF.blit(pygame.image.load("img/NutBack.png"), (0, 0))
         if (mouse_x >= 0) & (mouse_x <= 415) & (mouse_y >= 460) & (mouse_y <= 690):
-            DISPLAYSURF.blit(pygame.image.load("img/NutChonseMap1.png"), (0, 0))
+            DISPLAYSURF.blit(pygame.image.load("img/NutChoseMap1.png"), (0, 0))
         if (mouse_x >= 858) & (mouse_x <= 1280) & (mouse_y >= 151) & (mouse_y <= 392):
-            DISPLAYSURF.blit(pygame.image.load("img/NutChoseMap4.png"), (0, 0))
+            DISPLAYSURF.blit(pygame.image.load("img/NutChoseMap2.png"), (0, 0))
         pygame.display.update()
 
 def MeNu():
-    menu_sound.play(-1) # Bât nhạc menu
+    menu_sound.play(-1) 
     global coin
     while True:
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -719,7 +683,7 @@ def MeNu():
         DISPLAYSURF.blit(BG_MENU_IMG, (0, 0))
         drawCoin()
 
-        # Chỗ này làm hiệu ứng nút
+        # Hiệu ứng nút
         if (mouse_x >= 506) & (mouse_x <= 817) & (mouse_y >= 210) & (mouse_y <= 294):
             DISPLAYSURF.blit(NutPlay, (0, 0))
         if (mouse_x >= 506) & (mouse_x <= 817) & (mouse_y >= 334) & (mouse_y <= 420):
@@ -733,7 +697,6 @@ def MeNu():
 
 def main():
     MeNu()
-#####################################
 
 from tkinter import *
 import os
@@ -893,4 +856,6 @@ def main_screen():
 
 
 main_screen()
+
+# By Team 7 - IS208.O21
 
