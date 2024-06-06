@@ -37,5 +37,23 @@
 </p>
 
 <p> <b>Hướng dẫn sử dụng: </b>
-  <br><b><i>Đang cập nhật</i></b>
+  <ul>
+	  <li>Bước 1: Thực hiện đăng ký tài khoản người dùng</li>
+	  <li>Bước 2: Đăng nhập</li>
+	  <li>Bước 3: Chơi minigame để kiếm tiền</li>
+	  <li>Bước 4: Chọn Play để thực hiện chơi đua xe đặt cược</li>
+  </ul>
+</p>
+
+<p> <b> Công cụ và công nghệ: </b>
+  <ul>
+	  <li>Visual Studio Code</li>
+	  <li>Python</li>
+	  <li>Pygame</li>
+	  <li>Tkinter</li>
+  </ul>
+</p>
+
+<p> <b> Nguồn tham khảo minigame DinoRun </b>
+<br> https://github.com/robinrezwan/DinoRun
 </p>
